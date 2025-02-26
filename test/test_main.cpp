@@ -1,5 +1,5 @@
 #include "gtest.h"
-#include "expression_translator.h"
+#include "polynomial_translator.h"
 
 int main(int argc, char** argv)
 {
