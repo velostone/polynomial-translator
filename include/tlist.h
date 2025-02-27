@@ -8,12 +8,13 @@ class Node
 public:
 	T data;
 	Node* next;
-	Node(T _data, Node* _next) : data(_data), next(_next) { }
+	Node(T _data = NULL, Node* _next = nullptr) : data(_data), next(_next) { }
 };
 
 template<typename T>
 class List
 {
+protected:
 	Node<T>* first;
 	size_t size;
 public:
@@ -98,9 +99,13 @@ public:
 			push_front(elem);
 		else
 		{
-			Node<T>* new_node = new Node<T>(elem, node->next);
-			node->next = new_node;
-			size++;
+			try 
+			{
+				Node<T>* new_node = new Node<T>(elem, node->next);
+				node->next = new_node;
+				size++;
+			}
+			catch (const std::bad_alloc& e) { std::cerr << e.what() << std::endl; }
 		}
 	}
 	void erase(Node<T>* node)
@@ -133,11 +138,15 @@ public:
 	}
 	void push_back(T elem)
 	{
-		Node<T>* new_node = new Node<T>(elem, nullptr);
-		Node<T>* last_node = this->get_last();
-		if (last_node != nullptr) last_node->next = new_node;
-		else first = new_node;
-		size++;
+		try
+		{
+			Node<T>* new_node = new Node<T>(elem, nullptr);
+			Node<T>* last_node = this->get_last();
+			if (last_node != nullptr) last_node->next = new_node;
+			else first = new_node;
+			size++;
+		}
+		catch (const std::bad_alloc& e) { std::cerr << e.what() << std::endl; }
 	}
 	class iterator
 	{
