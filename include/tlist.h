@@ -32,7 +32,7 @@ public:
 	{
 		first = nullptr;
 		size = 0;
-		for (iterator it = _list.begin(); it != _list.end(); it++)
+		for (iterator it = _list.begin(); it != _list.end(); ++it)
 			push_back(*it);
 	}
 	~List()
@@ -56,12 +56,13 @@ public:
 				delete temp;
 			}
 			size = 0;
-			for (iterator it = _list.begin(); it != _list.end(); it++)
+			for (iterator it = _list.begin(); it != _list.end(); ++it)
 				push_back(*it);
 		}
 		return *this;
 	}
 	Node<T>* get_first() const noexcept { return first; }
+	size_t get_size() const noexcept { return size; }
 	Node<T>* begin() noexcept
 	{
 		return first;
@@ -80,9 +81,13 @@ public:
 	}
 	void push_front(T elem)
 	{
+		try
+		{
 		Node<T>* new_node = new Node<T>(elem, first);
 		this->first = new_node;
 		size++;
+		}
+		catch (const std::bad_alloc& e) { std::cerr << e.what() << std::endl; }
 	}
 	void pop_front()
 	{
@@ -127,12 +132,17 @@ public:
 	}
 	Node<T>* get_last()
 	{
-		if (first == nullptr)
-			return nullptr;
+		if (first == nullptr) return nullptr;
 		Node<T>* current = first;
-		while (current->next != nullptr)
+		Node<T>* next_node = first->next;
+		while (next_node != nullptr && next_node != first)
 		{
-			current = current->next;
+			current = next_node;
+			next_node = next_node->next;
+		}
+		if (next_node == first)
+		{
+			return current;
 		}
 		return current;
 	}
