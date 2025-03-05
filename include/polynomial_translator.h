@@ -1,3 +1,4 @@
+#pragma once
 #include "tlist.h"
 #include <iostream>
 
@@ -91,8 +92,8 @@ public:
 	Polynom operator+ (const Polynom& p)
 	{
 		Polynom res;
-		iterator it1 = this->begin()->next;
-		iterator it2 = p.begin()->next;
+		iterator it1 = this->begin().get_current()->next;
+		iterator it2 = p.begin().get_current()->next;
 		while (it1 != this->end() && it2 != p.end())
 		{
 			if ((*it1).get_deg() == (*it2).get_deg())
@@ -133,20 +134,25 @@ public:
 	Polynom operator* (const double scal)
 	{
 		Polynom res;
-		for (iterator it = this->begin()->next; it != this->end(); ++it)
+		for (iterator it = this->begin().get_current()->next; it != this->end(); ++it)
 			res.push_back((*it) * scal);
+		return res;
+	}
+	Polynom operator* (const Monom& m) const
+	{
+		Polynom res;
+		for (iterator it = this->begin().get_current()->next; it != this->end(); ++it)
+			res.push_back((*it) * m);
 		return res;
 	}
 	Polynom operator* (const Polynom& p)
 	{
 		Polynom res;
-		iterator it1 = this->begin()->next;
+		res.begin().get_current()->next = nullptr;
+		iterator it1 = this->begin().get_current()->next;
 		for (; it1 != this->end(); ++it1) 
 		{
-			iterator it2 = p.begin()->next;
-			for (; it2 != p.end(); ++it2) {
-				res.push_back(*(it1) * *(it2));
-			}
+			res = res + p * (*it1);
 		}
 		return res;
 	}

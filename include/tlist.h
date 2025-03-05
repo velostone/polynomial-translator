@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 
 using std::size_t;
@@ -8,7 +9,7 @@ class Node
 public:
 	T data;
 	Node* next;
-	Node(T _data = NULL, Node* _next = nullptr) : data(_data), next(_next) { }
+	Node(T _data = T(), Node* _next = nullptr) : data(_data), next(_next) {}
 };
 
 template<typename T>
@@ -37,6 +38,10 @@ public:
 	}
 	~List()
 	{
+		this->clear();
+	}
+	void clear()
+	{
 		while (first != nullptr)
 		{
 			Node<T>* temp = first;
@@ -49,13 +54,7 @@ public:
 	{
 		if (this != &_list)
 		{
-			while (first != nullptr)
-			{
-				Node<T>* temp = first;
-				first = first->next;
-				delete temp;
-			}
-			size = 0;
+			this->clear();
 			for (iterator it = _list.begin(); it != _list.end(); ++it)
 				push_back(*it);
 		}
@@ -63,22 +62,6 @@ public:
 	}
 	Node<T>* get_first() const noexcept { return first; }
 	size_t get_size() const noexcept { return size; }
-	Node<T>* begin() noexcept
-	{
-		return first;
-	}
-	Node<T>* end() noexcept
-	{
-		return nullptr;
-	}
-	const Node<T>* begin() const noexcept
-	{
-		return first;
-	}
-	const Node<T>* end() const noexcept
-	{
-		return nullptr;
-	}
 	void push_front(T elem)
 	{
 		try
@@ -109,6 +92,8 @@ public:
 				Node<T>* new_node = new Node<T>(elem, node->next);
 				node->next = new_node;
 				size++;
+				if (new_node->next == first)
+					new_node->next = nullptr;
 			}
 			catch (const std::bad_alloc& e) { std::cerr << e.what() << std::endl; }
 		}
@@ -140,23 +125,11 @@ public:
 			current = next_node;
 			next_node = next_node->next;
 		}
-		if (next_node == first)
-		{
-			return current;
-		}
 		return current;
 	}
 	void push_back(T elem)
 	{
-		try
-		{
-			Node<T>* new_node = new Node<T>(elem, nullptr);
-			Node<T>* last_node = this->get_last();
-			if (last_node != nullptr) last_node->next = new_node;
-			else first = new_node;
-			size++;
-		}
-		catch (const std::bad_alloc& e) { std::cerr << e.what() << std::endl; }
+		this->insert(elem, this->get_last());
 	}
 	class iterator
 	{
@@ -165,6 +138,7 @@ public:
 		iterator(Node<T>* node) : current(node) {}
 		iterator(const Node<T>* node) : current(const_cast<Node<T>*>(node)) {}
 		iterator(const iterator& it) { current = it.current; }
+		iterator(std::nullptr_t ptr) { current = nullptr; }
 		Node<T>* get_current() const noexcept { return current; }
 		iterator& operator++()
 		{
@@ -179,7 +153,7 @@ public:
 		}
 		T& operator*()
 		{
-			return current->data;	
+			return current->data;
 		}
 		const T& operator*() const
 		{
@@ -198,4 +172,20 @@ public:
 			return !(*this == it);
 		}
 	};
+	iterator begin() noexcept
+	{
+		return iterator(first);
+	}
+	iterator end() noexcept
+	{
+		return iterator(nullptr);
+	}
+	const iterator begin() const noexcept
+	{
+		return iterator(first);
+	}
+	const iterator end() const noexcept
+	{
+		return iterator(nullptr);
+	}
 };

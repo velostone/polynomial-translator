@@ -17,9 +17,9 @@ TEST(ListTest, can_push_front)
 {
     List<int> list;
     list.push_front(8);
-    EXPECT_EQ(list.begin()->data, 8);
+    EXPECT_EQ((*list.begin()), 8);
     list.push_front(16);
-    EXPECT_EQ(list.begin()->data, 16);
+    EXPECT_EQ((*list.begin()), 16);
 }
 
 TEST(ListTest, can_pop_front) 
@@ -28,14 +28,14 @@ TEST(ListTest, can_pop_front)
     list.push_front(8);
     list.push_front(16);
     list.pop_front();
-    EXPECT_EQ(list.begin()->data, 8);
+    EXPECT_EQ((*list.begin()), 8);
 }
 
 TEST(ListTest, can_push_back) 
 {
     List<int> list;
     list.push_back(8);
-    EXPECT_EQ(list.begin()->data, 8);
+    EXPECT_EQ((*list.begin()), 8);
 }
 
 TEST(ListTest, can_get_last) 
@@ -51,7 +51,7 @@ TEST(ListTest, can_copy_list)
     list.push_back(8);
     list.push_back(16);
     List<int> list_cpy(list);
-    EXPECT_EQ(list_cpy.begin()->data, 8);
+    EXPECT_EQ((*list_cpy.begin()), 8);
     EXPECT_EQ(list_cpy.get_last()->data, 16);
 }
 
@@ -67,7 +67,7 @@ TEST(ListTest, can_iterate_through_list) {
     ++it;
     EXPECT_EQ(*it, 24);
     ++it;
-    EXPECT_EQ(it, list.end());
+    EXPECT_EQ(it, nullptr);
 }
 
 TEST(ListTest, can_insert_elem) 
@@ -91,5 +91,5 @@ TEST(ListTest, can_erase_elem)
     list.push_back(16);
     List<int>::iterator it = list.begin();
     list.erase(it.get_current());
-    EXPECT_EQ(list.begin()->data, 8);
+    EXPECT_EQ((*list.begin()), 8);
 }
