@@ -92,8 +92,6 @@ public:
 				Node<T>* new_node = new Node<T>(elem, node->next);
 				node->next = new_node;
 				size++;
-				if (new_node->next == first)
-					new_node->next = nullptr;
 			}
 			catch (const std::bad_alloc& e) { std::cerr << e.what() << std::endl; }
 		}
@@ -130,6 +128,36 @@ public:
 	void push_back(T elem)
 	{
 		this->insert(elem, this->get_last());
+	}
+	bool check_cycle()
+	{
+		Node<T>* slow = first;
+		Node<T>* fast = first;
+
+		while (fast != nullptr)
+		{
+			fast = fast->next;
+			slow = slow->next;
+			if (fast == nullptr) return false;
+			else fast = fast->next;
+			if (fast == slow) return true;
+		}
+		return false;
+	}
+	const bool check_cycle() const
+	{
+		Node<T>* slow = first;
+		Node<T>* fast = first;
+
+		while (fast != nullptr)
+		{
+			fast = fast->next;
+			slow = slow->next;
+			if (fast == nullptr) return false;
+			else fast = fast->next;
+			if (fast == slow) return true;
+		}
+		return false;
 	}
 	class iterator
 	{
@@ -172,20 +200,24 @@ public:
 			return !(*this == it);
 		}
 	};
-	iterator begin() noexcept
+	iterator begin(bool k = 0) noexcept
 	{
+		if (k) return iterator(first->next);
 		return iterator(first);
 	}
 	iterator end() noexcept
 	{
+		if (check_cycle()) return iterator(first);
 		return iterator(nullptr);
 	}
-	const iterator begin() const noexcept
+	const iterator begin(bool k = 0) const noexcept
 	{
+		if (k) return iterator(first->next);
 		return iterator(first);
 	}
 	const iterator end() const noexcept
 	{
+		if (check_cycle()) return iterator(first);
 		return iterator(nullptr);
 	}
 };

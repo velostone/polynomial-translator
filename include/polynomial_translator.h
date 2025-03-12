@@ -75,6 +75,18 @@ public:
 		}
 		catch (const std::bad_alloc& e) { std::cerr << e.what() << std::endl; }
 	}
+	Polynom(const Polynom& p)
+	{
+		try
+		{
+			Node<Monom>* p = new Node<Monom>;
+			first = p;
+			p->next = p;
+		}
+		catch (const std::bad_alloc& e) { std::cerr << e.what() << std::endl; }
+		for (iterator it = p.begin(1); it != p.end(); ++it)
+			this->push_back(*it);
+	}
 	~Polynom()
 	{
 		if (first == nullptr) return;
@@ -89,11 +101,26 @@ public:
 		first = nullptr;
 		size = 0;
 	}
+	Polynom& operator=(const Polynom& p) {
+		if (this != &p) 
+		{
+			while (this->size != 0)
+			{
+				Node<Monom>* temp = first->next;
+				first->next = temp->next;
+				delete temp;
+				size--;
+			}
+			for (iterator it = p.begin(1); it != p.end(); ++it)
+				this->push_back(*it);
+		}
+		return *this;
+	}
 	Polynom operator+ (const Polynom& p)
 	{
 		Polynom res;
-		iterator it1 = this->begin().get_current()->next;
-		iterator it2 = p.begin().get_current()->next;
+		iterator it1 = this->begin(1);
+		iterator it2 = p.begin(1);
 		while (it1 != this->end() && it2 != p.end())
 		{
 			if ((*it1).get_deg() == (*it2).get_deg())
@@ -134,22 +161,21 @@ public:
 	Polynom operator* (const double scal)
 	{
 		Polynom res;
-		for (iterator it = this->begin().get_current()->next; it != this->end(); ++it)
+		for (iterator it = this->begin(1); it != this->end(); ++it)
 			res.push_back((*it) * scal);
 		return res;
 	}
 	Polynom operator* (const Monom& m) const
 	{
 		Polynom res;
-		for (iterator it = this->begin().get_current()->next; it != this->end(); ++it)
+		for (iterator it = this->begin(1); it != this->end(); ++it)
 			res.push_back((*it) * m);
 		return res;
 	}
 	Polynom operator* (const Polynom& p)
 	{
 		Polynom res;
-		res.begin().get_current()->next = nullptr;
-		iterator it1 = this->begin().get_current()->next;
+		iterator it1 = this->begin(1);
 		for (; it1 != this->end(); ++it1) 
 		{
 			res = res + p * (*it1);

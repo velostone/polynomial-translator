@@ -160,9 +160,10 @@ TEST(PolynomTest, can_create_polynom)
 }
 
 TEST_F(PolynomTestF, can_addict_polynoms) {
-    Polynom res = *(this->p1) + *(this->p2);
+    Polynom res;
+    res = *(this->p1) + *(this->p2);
 
-    List<Monom>::iterator it = res.begin().get_current()->next;
+    List<Monom>::iterator it = res.begin(1);
 
     EXPECT_EQ((*it).get_deg(), 102);
     EXPECT_EQ((*it).get_k(), -1);
@@ -184,7 +185,7 @@ TEST_F(PolynomTestF, can_mult_with_scalar)
 {
     Polynom res = *(this->p1) * 2;
 
-    List<Monom>::iterator it = res.begin().get_current()->next;
+    List<Monom>::iterator it = res.begin(1);
     EXPECT_EQ((*it).get_deg(), 102);
     EXPECT_EQ((*it).get_k(), -6);
 
@@ -198,7 +199,7 @@ TEST_F(PolynomTestF, can_mult_polynoms)
 {
     Polynom res = *(this->p1) * *(this->p2);
 
-    List<Monom>::iterator it = res.begin().get_current()->next;
+    List<Monom>::iterator it = res.begin(1);
     EXPECT_EQ((*it).get_deg(), 239);
     EXPECT_EQ((*it).get_k(), 3);
 
